@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom"; // استيراد Link من react-router-dom
 
 const SheikhsPage = () => {
   const [sheikhs, setSheikhs] = useState([]);
@@ -76,20 +77,21 @@ const SheikhsPage = () => {
             </h3>
             <p className="text-gray-600 mb-4">{sheikh.bio}</p>
             <div className="flex space-x-2">
-              <a
-                href={`/sheikh/${sheikh._id}/recordings`}
+              {/* استخدام Link بدلًا من <a> */}
+              <Link
+                to={`/sheikh/${sheikh._id}/recordings`}
                 className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition duration-300 flex-1 text-center ml-4"
               >
                 استمع إلى التسجيلات
-              </a>
+              </Link>
               {isAuthenticated && (
                 <>
-                  <a
-                    href={`/edit-sheikh/${sheikh._id}`}
+                  <Link
+                    to={`/edit-sheikh/${sheikh._id}`}
                     className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
                   >
                     تعديل
-                  </a>
+                  </Link>
                   <button
                     onClick={() => handleDelete(sheikh._id)}
                     className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300"
