@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // استيراد Link من react-router-dom
 
 const RecordingsPage = () => {
     const [recordings, setRecordings] = useState([]);
@@ -127,12 +128,13 @@ const RecordingsPage = () => {
                             </a>
                             {isAuthenticated && (
                                 <>
-                                    <a
-                                        href={`/edit-recording/${recording._id}`}
+                                    {/* استخدام Link بدلًا من <a> */}
+                                    <Link
+                                        to={`/edit-recording/${recording._id}`}
                                         className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300"
                                     >
                                         تعديل
-                                    </a>
+                                    </Link>
                                     <button
                                         onClick={() => handleDelete(recording._id)}
                                         className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300"
