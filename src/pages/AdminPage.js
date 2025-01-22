@@ -72,11 +72,11 @@ const AdminPage = () => {
     const uploadFileToCloudinary = async (file, resourceType = 'auto') => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('upload_preset', process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET);
+        formData.append('upload_preset', 'quran_app_preset');
 
         try {
             const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+                `https://api.cloudinary.com/v1_1/df7h4gxaf/${resourceType}/upload`,
                 {
                     method: 'POST',
                     body: formData,
