@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../contexts/ToastContext';
+import API_BASE_URL from '../config/api';
+import { uploadWithRetry, validateAudioFile } from '../utils/uploadUtils';
 
 const AdminPage = () => {
     const navigate = useNavigate();
@@ -46,16 +48,16 @@ const AdminPage = () => {
                 setLoading(true);
                 
                 // Fetch recordings
-                const recordingsResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/recordings');
+                const recordingsResponse = await axios.get(`${API_BASE_URL}/recordings`);
                 setRecordings(recordingsResponse.data.data || []);
                 
                 // Fetch sheikhs
-                const sheikhsResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/sheikhs');
+                const sheikhsResponse = await axios.get(`${API_BASE_URL}/sheikhs`);
                 setSheikhs(sheikhsResponse.data.data || []);
                 
                 // Fetch banner data
                 try {
-                    const bannerResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/sadaqa');
+                    const bannerResponse = await axios.get(`${API_BASE_URL}/sadaqa`);
                     if (bannerResponse.data.data) {
                         setBannerData(bannerResponse.data.data);
                     }
@@ -82,7 +84,11 @@ const AdminPage = () => {
         setUploadProgress(0);
 
         try {
-            const token = localStorage.getItem('token');
+            // Validate audio file first
+            if (formData.audio_file) {
+                validateAudioFile(formData.audio_file);
+            }
+
             const submitData = new FormData();
             
             Object.keys(formData).forEach(key => {
@@ -91,17 +97,8 @@ const AdminPage = () => {
                 }
             });
 
-            await axios.post('https://quran-app-bms.vercel.app/api/v1/admin/recordings', submitData, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                onUploadProgress: (progressEvent) => {
-                    const percentCompleted = Math.round(
-                        (progressEvent.loaded * 100) / progressEvent.total
-                    );
-                    setUploadProgress(percentCompleted);
-                },
-            });
+            console.log('Starting upload with enhanced retry logic...');
+            await uploadWithRetry(submitData, setUploadProgress);
 
             showSuccess('تم رفع التسجيل بنجاح');
             setFormData({
@@ -114,7 +111,7 @@ const AdminPage = () => {
             });
             
             // Refresh recordings list
-            const recordingsResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/recordings');
+            const recordingsResponse = await axios.get(`${API_BASE_URL}/recordings`);
             setRecordings(recordingsResponse.data.data);
             
         } catch (error) {
@@ -141,7 +138,7 @@ const AdminPage = () => {
                 }
             });
 
-            await axios.post('https://quran-app-bms.vercel.app/api/v1/sheikhs', submitData, {
+            await axios.post(`${API_BASE_URL}/sheikhs`, submitData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
@@ -152,7 +149,7 @@ const AdminPage = () => {
             setSheikhFormData({ name: '', bio: '', photo: null });
             
             // Refresh sheikhs list
-            const sheikhsResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/sheikhs');
+            const sheikhsResponse = await axios.get(`${API_BASE_URL}/sheikhs`);
             setSheikhs(sheikhsResponse.data.data);
             
         } catch (error) {
@@ -171,14 +168,14 @@ const AdminPage = () => {
             const token = localStorage.getItem('token');
             
             // First, deactivate all existing banners
-            const existingBanners = await axios.get('https://quran-app-bms.vercel.app/api/v1/sadaqa', {
+            const existingBanners = await axios.get(`${API_BASE_URL}/sadaqa`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
             if (existingBanners.data.data && existingBanners.data.data.length > 0) {
                 // Deactivate all existing banners
                 for (const banner of existingBanners.data.data) {
-                    await axios.patch(`https://quran-app-bms.vercel.app/api/v1/sadaqa/${banner._id}`, 
+                    await axios.patch(`${API_BASE_URL}/sadaqa/${banner._id}`, 
                         { isActive: false }, 
                         { headers: { 'Authorization': `Bearer ${token}` } }
                     );
@@ -186,7 +183,7 @@ const AdminPage = () => {
             }
             
             // Create new banner
-            await axios.post('https://quran-app-bms.vercel.app/api/v1/sadaqa', {
+            await axios.post(`${API_BASE_URL}/sadaqa`, {
                 text: bannerData.text,
                 isActive: bannerData.isActive,
                 order: 1
@@ -212,7 +209,7 @@ const AdminPage = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`https://quran-app-bms.vercel.app/api/v1/recordings/${id}`, {
+            await axios.delete(`${API_BASE_URL}/recordings/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
 
