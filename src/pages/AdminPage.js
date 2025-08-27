@@ -91,7 +91,7 @@ const AdminPage = () => {
                 }
             });
 
-            await axios.post('https://quran-app-bms.vercel.app/api/v1/admin/upload', submitData, {
+            await axios.post('https://quran-app-bms.vercel.app/api/v1/admin/recordings', submitData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
