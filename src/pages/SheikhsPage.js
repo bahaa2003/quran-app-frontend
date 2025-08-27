@@ -165,7 +165,7 @@ const SheikhsPage = () => {
                 
                 <div className="flex flex-col gap-3">
                   <Link
-                    to={`/sheikh/${sheikh._id}/recordings`}
+                    to={`/sheikh/${sheikh._id}`}
                     className="group/btn bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 text-center font-semibold shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
                     <span className="flex items-center justify-center">
