@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import UnifiedAudioPlayer from '../components/UnifiedAudioPlayer';
+import AudioPlayer from '../components/AudioPlayer';
 import QuranTextDisplay from '../components/QuranTextDisplay';
 import { useAudio } from '../contexts/AudioContext';
 import { useTheme } from '../contexts/ThemeContext';
@@ -341,33 +341,24 @@ const RecordingsPage = () => {
                                     </div>
                                 )}
                                 
-                                {/* تخطيط متجاوب للمشغل والنص القرآني */}
-                                <div className="flex flex-col">
-                                    {/* النص القرآني - فوق المشغل على الديسكتوب */}
-                                    {recording.surah && recording.fromAyah && recording.toAyah && (
-                                        <div className="order-1 md:order-1">
-                                            <QuranTextDisplay 
-                                                surahNumber={recording.surahNumber}
-                                                fromAyah={recording.fromAyah}
-                                                toAyah={recording.toAyah}
-                                                recordingId={recording._id}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {/* مشغل الصوت الموحد */}
-                                    <div className="order-2 md:order-2 mb-8">
-                                        <UnifiedAudioPlayer 
-                                            src={recording.audio_file} 
-                                            recordingId={recording._id}
-                                            title={recording.title}
-                                            showDownload={true}
-                                            downloadUrl={recording.audio_file}
-                                            isLiveRadio={false}
-                                            className="mb-4"
-                                        />
-                                    </div>
+                                {/* مشغل الصوت */}
+                                <div className="mb-8">
+                                    <AudioPlayer 
+                                        src={recording.audio_file} 
+                                        recordingId={recording._id}
+                                        className="mb-4"
+                                    />
                                 </div>
+
+                                {/* عرض النص القرآني */}
+                                {recording.surah && recording.fromAyah && recording.toAyah && (
+                                    <QuranTextDisplay 
+                                        surahNumber={recording.surahNumber}
+                                        fromAyah={recording.fromAyah}
+                                        toAyah={recording.toAyah}
+                                        recordingId={recording._id}
+                                    />
+                                )}
 
                                 {/* معلومات الشيخ */}
                                 <div className={`
