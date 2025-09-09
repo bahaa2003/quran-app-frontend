@@ -376,26 +376,27 @@ const AdminPage = () => {
                     </div>
 
                     <div>
-                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                            اسم السورة
-                        </label>
-                        <input
-                            type="text"
-                            name="surah"
-                            value={formData.surah}
-                            onChange={handleChange}
-                            required
-                            placeholder="مثال: الفاتحة"
-                            className={`
-                                w-full p-4 rounded-xl border-2 transition-all duration-300
-                                ${isDarkMode 
-                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
-                                    : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
-                                }
-                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
-                            `}
-                        />
-                    </div>
+  <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+    عنوان التسجيل
+  </label>
+  <input
+    type="text"
+    name="title"
+    value={formData.title}
+    onChange={handleChange}
+    required
+    placeholder="مثال: تلاوة سورة الفاتحة"
+    className={`
+      w-full p-4 rounded-xl border-2 transition-all duration-300
+      ${isDarkMode 
+        ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
+        : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
+      }
+      focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+    `}
+  />
+</div>
+
 
                     <div>
                         <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>

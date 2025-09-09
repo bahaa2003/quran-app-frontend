@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { formatTime12Hour } from '../utils/timeUtils';
 
 const PrayerTimes = () => {
     const { isDarkMode } = useTheme();
@@ -186,7 +187,7 @@ const PrayerTimes = () => {
                                 text-xl md:text-2xl font-mono font-bold transition-colors duration-500
                                 ${isDarkMode ? 'text-emerald-300' : 'text-emerald-600'}
                             `}>
-                                {prayerTimes[englishName]?.substring(0, 5) || '--:--'}
+                                {formatTime12Hour(prayerTimes[englishName])}
                             </p>
                         </div>
                     ))}
