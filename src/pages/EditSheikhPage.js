@@ -40,7 +40,7 @@ const EditSheikhPage = () => {
                 
                 try {
                     // First attempt: Direct sheikh endpoint
-                    const response = await axios.get(`https://quran-app-bms.vercel.app/api/v1/sheikhs/${id}`, {
+                    const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sheikhs/${id}`, {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         },
@@ -55,7 +55,7 @@ const EditSheikhPage = () => {
                     
                     // Fallback: Get all sheikhs and find the specific one
                     try {
-                        const allSheikhsResponse = await axios.get('https://quran-app-bms.vercel.app/api/v1/sheikhs', {
+                        const allSheikhsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sheikhs`, {
                             timeout: 8000
                         });
                         
@@ -122,7 +122,7 @@ const EditSheikhPage = () => {
                 return;
             }
 
-            const response = await axios.patch(`https://quran-app-bms.vercel.app/api/v1/sheikhs/${id}`, formData, {
+            const response = await axios.patch(`${process.env.REACT_APP_API_URL}/api/v1/sheikhs/${id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

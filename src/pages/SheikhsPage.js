@@ -17,7 +17,7 @@ const SheikhsPage = () => {
     const fetchSheikhs = async () => {
       try {
         const response = await axios.get(
-          "https://quran-app-bms.vercel.app/api/v1/sheikhs"
+          `${process.env.REACT_APP_API_URL}/api/v1/sheikhs`
         );
         setSheikhs(response.data.data);
         setFilteredSheikhs(response.data.data);
@@ -45,7 +45,7 @@ const SheikhsPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://quran-app-bms.vercel.app/api/v1/sheikhs/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/sheikhs/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

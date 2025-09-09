@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import LiveRadio from '../components/LiveRadio';
 import SadaqaJariya from '../components/SadaqaJariya';
+import PrayerTimes from '../components/PrayerTimes';
 import { useTheme } from '../contexts/ThemeContext';
 
 const HomePage = () => {
@@ -116,6 +117,28 @@ const HomePage = () => {
                 <div className="mb-24">
                     <div className="max-w-4xl mx-auto">
                         <SadaqaJariya />
+                    </div>
+                </div>
+
+                {/* Prayer Times Section */}
+                <div className="mb-24">
+                    <div className="text-center mb-12">
+                        <h3 className={`
+                            text-4xl md:text-5xl font-bold mb-6 transition-colors duration-500
+                            ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}
+                        `}>
+                            🕌 مواقيت الصلاة
+                        </h3>
+                        <p className={`
+                            text-xl md:text-2xl transition-colors duration-500
+                            ${isDarkMode ? 'text-slate-300' : 'text-slate-600'}
+                        `}>
+                            مواقيت الصلاة اليومية حسب موقعك الجغرافي
+                        </p>
+                        <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mt-4"></div>
+                    </div>
+                    <div className="max-w-5xl mx-auto">
+                        <PrayerTimes />
                     </div>
                 </div>
 

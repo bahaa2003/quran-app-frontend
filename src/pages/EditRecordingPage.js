@@ -27,7 +27,7 @@ const EditRecordingPage = () => {
     useEffect(() => {
         const fetchRecording = async () => {
             try {
-                const response = await axios.get(`https://quran-app-bms.vercel.app/api/v1/recordings/${id}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/recordings/${id}`);
                 setFormData(response.data.data);
             } catch (error) {
                 console.error('Error fetching recording:', error);
@@ -36,7 +36,7 @@ const EditRecordingPage = () => {
 
         const fetchSheikhs = async () => {
             try {
-                const response = await axios.get('https://quran-app-bms.vercel.app/api/v1/sheikhs');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sheikhs`);
                 setSheikhs(response.data.data);
             } catch (error) {
                 console.error('Error fetching sheikhs:', error);
@@ -78,7 +78,7 @@ const EditRecordingPage = () => {
                 toAyah: formData.toAyah ? parseInt(formData.toAyah) : undefined,
             };
 
-            const response = await axios.patch(`https://quran-app-bms.vercel.app/api/v1/recordings/${id}`, updateData, {
+            const response = await axios.patch(`${process.env.REACT_APP_API_URL}/api/v1/recordings/${id}`, updateData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

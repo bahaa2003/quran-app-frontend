@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams, Link } from 'react-router-dom';
 import UnifiedAudioPlayer from '../components/UnifiedAudioPlayer';
 import QuranTextDisplay from '../components/QuranTextDisplay';
+import TafsirModal from '../components/TafsirModal';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../contexts/ToastContext';
 
@@ -15,12 +16,19 @@ const SheikhRecordingsPage = () => {
     const [sheikh, setSheikh] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
+    const [tafsirModal, setTafsirModal] = useState({
+        isOpen: false,
+        surahNumber: null,
+        fromAyah: null,
+        toAyah: null,
+        surahName: ''
+    });
     const isAuthenticated = !!localStorage.getItem('token');
 
     useEffect(() => {
         const fetchRecordings = async () => {
             try {
-                const response = await axios.get(`https://quran-app-bms.vercel.app/api/v1/recordings/sheikh/${sheikhId}`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/recordings/sheikh/${sheikhId}`);
                 const sortedRecordings = response.data.data.recordings.sort((a, b) => new Date(b.date) - new Date(a.date));
                 setRecordings(sortedRecordings);
                 setFilteredRecordings(sortedRecordings);
@@ -49,13 +57,35 @@ const SheikhRecordingsPage = () => {
         }
     }, [searchQuery, recordings]);
 
+    const handleShowTafsir = (recording) => {
+        if (recording.surahNumber && recording.fromAyah && recording.toAyah) {
+            setTafsirModal({
+                isOpen: true,
+                surahNumber: recording.surahNumber,
+                fromAyah: recording.fromAyah,
+                toAyah: recording.toAyah,
+                surahName: recording.surah || 'القرآن الكريم'
+            });
+        }
+    };
+
+    const closeTafsirModal = () => {
+        setTafsirModal({
+            isOpen: false,
+            surahNumber: null,
+            fromAyah: null,
+            toAyah: null,
+            surahName: ''
+        });
+    };
+
     const handleDelete = async (id) => {
         const isConfirmed = window.confirm('هل أنت متأكد من حذف التسجيل؟');
         if (!isConfirmed) return;
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`https://quran-app-bms.vercel.app/api/v1/recordings/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/recordings/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -279,6 +309,28 @@ const SheikhRecordingsPage = () => {
                                                 </div>
                                             )}
                                         </div>
+                                        
+                                        {/* Tafsir Button */}
+                                        {recording.surahNumber && recording.fromAyah && recording.toAyah && (
+                                            <div className="mt-4">
+                                                <button
+                                                    onClick={() => handleShowTafsir(recording)}
+                                                    className={`
+                                                        w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center justify-center
+                                                        ${isDarkMode 
+                                                            ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white' 
+                                                            : 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white'
+                                                        }
+                                                        shadow-lg hover:shadow-xl
+                                                    `}
+                                                >
+                                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    📖 عرض التفسير
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 
@@ -331,6 +383,16 @@ const SheikhRecordingsPage = () => {
                     )}
                 </div>
             </div>
+            
+            {/* Tafsir Modal */}
+            <TafsirModal
+                isOpen={tafsirModal.isOpen}
+                onClose={closeTafsirModal}
+                surahNumber={tafsirModal.surahNumber}
+                fromAyah={tafsirModal.fromAyah}
+                toAyah={tafsirModal.toAyah}
+                surahName={tafsirModal.surahName}
+            />
         </div>
     );
 };

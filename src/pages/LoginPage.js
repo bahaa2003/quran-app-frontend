@@ -18,7 +18,7 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('https://quran-app-bms.vercel.app/api/v1/auth/login', {
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/v1/auth/login`, {
                 username,
                 password,
             });

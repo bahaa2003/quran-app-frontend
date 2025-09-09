@@ -18,7 +18,7 @@ const RecordingsPage = () => {
     useEffect(() => {
         const fetchRecordings = async () => {
             try {
-                const response = await axios.get('https://quran-app-bms.vercel.app/api/v1/recordings');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/recordings`);
                 const sortedRecordings = response.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
                 setRecordings(sortedRecordings);
                 setFilteredRecordings(sortedRecordings);
@@ -57,7 +57,7 @@ const RecordingsPage = () => {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`https://quran-app-bms.vercel.app/api/v1/recordings/${id}`, {
+            await axios.delete(`${process.env.REACT_APP_API_URL}/api/v1/recordings/${id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

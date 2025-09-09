@@ -10,7 +10,7 @@ const SadaqaJariya = () => {
     useEffect(() => {
         const fetchBannerData = async () => {
             try {
-                const response = await axios.get('https://quran-app-bms.vercel.app/api/v1/sadaqa');
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/v1/sadaqa`);
                 if (response.data.data && response.data.data.length > 0) {
                     // Get the first active banner
                     const activeBanner = response.data.data.find(item => item.isActive);
