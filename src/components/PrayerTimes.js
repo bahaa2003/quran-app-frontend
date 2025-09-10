@@ -24,7 +24,7 @@ const PrayerTimes = () => {
                             try {
                                 // Fetch prayer times using Aladhan API
                                 const response = await fetch(
-                                    `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=2`
+                                    `https://api.aladhan.com/v1/timings?latitude=${latitude}&longitude=${longitude}&method=5`
                                 );
                                 
                                 if (!response.ok) {
