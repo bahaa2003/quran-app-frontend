@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useTheme } from '../contexts/ThemeContext';
 import { useToast } from '../contexts/ToastContext';
 import API_BASE_URL from '../config/api';
-import { uploadWithRetry, validateAudioFile } from '../utils/uploadUtils';
+import { uploadRecording, validateAudioFile } from '../utils/uploadUtils';
 
 const AdminPage = () => {
     const navigate = useNavigate();
@@ -22,11 +22,16 @@ const AdminPage = () => {
     
     // Form data states
     const [formData, setFormData] = useState({
+        title: '',
+        description: '',
         sheikh: '',
+        category: 'general',
+        year: '',
         surah: '',
         surahNumber: '',
         fromAyah: '',
         toAyah: '',
+        occasion: 'general',
         audio_file: null
     });
     
@@ -76,49 +81,61 @@ const AdminPage = () => {
         fetchData();
     }, [showError]);
 
-    // Form handlers
-    const handleRecordingSubmit = async (e) => {
+    // Handle recording upload
+    const handleUpload = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setIsUploading(true);
-        setUploadProgress(0);
+        
+        if (!validateForm()) {
+            return;
+        }
 
         try {
-            // Validate audio file first
-            if (formData.audio_file) {
-                validateAudioFile(formData.audio_file);
-            }
-
-            const submitData = new FormData();
+            // Validate audio file
+            validateAudioFile(formData.audio_file);
             
+            setIsUploading(true);
+            setUploadProgress(0);
+            
+            // Create FormData
+            const uploadData = new FormData();
             Object.keys(formData).forEach(key => {
                 if (formData[key] !== null && formData[key] !== '') {
-                    submitData.append(key, formData[key]);
+                    uploadData.append(key, formData[key]);
                 }
             });
-
-            console.log('Starting upload with enhanced retry logic...');
-            await uploadWithRetry(submitData, setUploadProgress);
-
-            showSuccess('تم رفع التسجيل بنجاح');
+            
+            // Upload with progress tracking
+            const result = await uploadRecording(uploadData, setUploadProgress);
+            
+            showSuccess('تم رفع التسجيل بنجاح!');
+            
+            // Reset form
             setFormData({
+                title: '',
+                description: '',
                 sheikh: '',
+                category: 'general',
+                year: '',
                 surah: '',
                 surahNumber: '',
                 fromAyah: '',
                 toAyah: '',
+                occasion: 'general',
                 audio_file: null
             });
             
+            // Reset file input
+            const fileInput = document.querySelector('input[type="file"]');
+            if (fileInput) fileInput.value = '';
+            
             // Refresh recordings list
             const recordingsResponse = await axios.get(`${API_BASE_URL}/recordings`);
-            setRecordings(recordingsResponse.data.data);
+            setRecordings(recordingsResponse.data.data || []);
             
         } catch (error) {
-            console.error('Error uploading recording:', error);
-            showError('حدث خطأ أثناء رفع التسجيل');
+            console.error('Upload error:', error);
+            showError(error.message || 'حدث خطأ أثناء رفع التسجيل');
         } finally {
-            setLoading(false);
             setIsUploading(false);
             setUploadProgress(0);
         }
@@ -221,12 +238,38 @@ const AdminPage = () => {
         }
     };
 
+    // Handle form validation
+    const validateForm = () => {
+        if (!formData.title.trim()) {
+            showError('عنوان التسجيل مطلوب');
+            return false;
+        }
+        if (!formData.sheikh) {
+            showError('اختيار الشيخ مطلوب');
+            return false;
+        }
+        if (!formData.audio_file) {
+            showError('ملف الصوت مطلوب');
+            return false;
+        }
+        if (formData.surahNumber && (parseInt(formData.surahNumber) < 1 || parseInt(formData.surahNumber) > 114)) {
+            showError('رقم السورة يجب أن يكون بين 1 و 114');
+            return false;
+        }
+        if (formData.fromAyah && formData.toAyah && parseInt(formData.fromAyah) > parseInt(formData.toAyah)) {
+            showError('رقم الآية الأولى يجب أن يكون أقل من أو يساوي رقم الآية الأخيرة');
+            return false;
+        }
+        return true;
+    };
+
     const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'file' ? files[0] : value,
-        });
+        const { name, value, files } = e.target;
+        if (files) {
+            setFormData(prev => ({ ...prev, [name]: files[0] }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSheikhChange = (e) => {
@@ -346,11 +389,33 @@ const AdminPage = () => {
                 رفع تسجيل جديد
             </h3>
             
-            <form onSubmit={handleRecordingSubmit} className="space-y-6">
+            <form onSubmit={handleUpload} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                            الشيخ
+                            عنوان التسجيل *
+                        </label>
+                        <input
+                            type="text"
+                            name="title"
+                            value={formData.title}
+                            onChange={handleChange}
+                            required
+                            placeholder="مثال: تلاوة سورة الفاتحة"
+                            className={`
+                                w-full p-4 rounded-xl border-2 transition-all duration-300
+                                ${isDarkMode 
+                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
+                                    : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
+                                }
+                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                            `}
+                        />
+                    </div>
+
+                    <div>
+                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            الشيخ *
                         </label>
                         <select
                             name="sheikh"
@@ -375,27 +440,93 @@ const AdminPage = () => {
                         </select>
                     </div>
 
+                    <div className="md:col-span-2">
+                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            الوصف
+                        </label>
+                        <textarea
+                            name="description"
+                            value={formData.description}
+                            onChange={handleChange}
+                            rows={3}
+                            placeholder="وصف التسجيل (اختياري)"
+                            className={`
+                                w-full p-4 rounded-xl border-2 transition-all duration-300 resize-none
+                                ${isDarkMode 
+                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
+                                    : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
+                                }
+                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                            `}
+                        />
+                    </div>
+
                     <div>
-  <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-    عنوان التسجيل
-  </label>
-  <input
-    type="text"
-    name="title"
-    value={formData.title}
-    onChange={handleChange}
-    required
-    placeholder="مثال: تلاوة سورة الفاتحة"
-    className={`
-      w-full p-4 rounded-xl border-2 transition-all duration-300
-      ${isDarkMode 
-        ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
-        : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
-      }
-      focus:outline-none focus:ring-4 focus:ring-emerald-500/20
-    `}
-  />
-</div>
+                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            التصنيف
+                        </label>
+                        <select
+                            name="category"
+                            value={formData.category}
+                            onChange={handleChange}
+                            className={`
+                                w-full p-4 rounded-xl border-2 transition-all duration-300
+                                ${isDarkMode 
+                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 focus:border-emerald-500' 
+                                    : 'bg-white/70 border-slate-200 text-slate-800 focus:border-emerald-500'
+                                }
+                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                            `}
+                        >
+                            <option value="general">عام</option>
+                            <option value="ramadan">رمضان</option>
+                            <option value="featured">مميز</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            السنة
+                        </label>
+                        <input
+                            type="number"
+                            name="year"
+                            value={formData.year}
+                            onChange={handleChange}
+                            placeholder="مثال: 1445"
+                            min="1400"
+                            max="1500"
+                            className={`
+                                w-full p-4 rounded-xl border-2 transition-all duration-300
+                                ${isDarkMode 
+                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
+                                    : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
+                                }
+                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                            `}
+                        />
+                    </div>
+
+                    <div>
+                        <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
+                            اسم السورة
+                        </label>
+                        <input
+                            type="text"
+                            name="surah"
+                            value={formData.surah}
+                            onChange={handleChange}
+                            placeholder="مثال: الفاتحة"
+                            className={`
+                                w-full p-4 rounded-xl border-2 transition-all duration-300
+                                ${isDarkMode 
+                                    ? 'bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:border-emerald-500' 
+                                    : 'bg-white/70 border-slate-200 text-slate-800 placeholder-slate-500 focus:border-emerald-500'
+                                }
+                                focus:outline-none focus:ring-4 focus:ring-emerald-500/20
+                            `}
+                        />
+                    </div>
 
 
                     <div>
@@ -465,9 +596,11 @@ const AdminPage = () => {
                         />
                     </div>
 
-                    <div>
+                  
+
+                    <div className="md:col-span-2">
                         <label className={`block text-sm font-semibold mb-2 ${isDarkMode ? 'text-slate-300' : 'text-slate-700'}`}>
-                            ملف الصوت
+                            ملف الصوت *
                         </label>
                         <input
                             type="file"
@@ -487,6 +620,9 @@ const AdminPage = () => {
                                 hover:file:bg-emerald-100
                             `}
                         />
+                        <p className={`text-xs mt-2 ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                            الحد الأقصى: 30 ميجابايت • الصيغ المدعومة: MP3, WAV, OGG
+                        </p>
                     </div>
                 </div>
 

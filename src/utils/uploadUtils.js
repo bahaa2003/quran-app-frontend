@@ -2,6 +2,45 @@
 import axios from 'axios';
 import API_BASE_URL from '../config/api';
 
+// Enhanced upload function with progress tracking
+export const uploadRecording = async (formData, onProgress) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/admin/recordings`, formData, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'multipart/form-data',
+      },
+      timeout: 300000, // 5 minutes timeout
+      onUploadProgress: (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        if (onProgress) onProgress(percentCompleted);
+      },
+    });
+    
+    return response.data;
+    
+  } catch (error) {
+    // Reset progress on error
+    if (onProgress) onProgress(0);
+    
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      throw new Error('Authentication failed. Please login again.');
+    }
+    
+    if (error.response?.status === 413) {
+      throw new Error('File too large. Maximum size is 30MB.');
+    }
+    
+    if (error.code === 'ERR_NETWORK') {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    
+    throw new Error(error.response?.data?.message || 'Upload failed. Please try again.');
+  }
+};
+
 // Enhanced upload function with retry logic
 export const uploadWithRetry = async (formData, onProgress, maxRetries = 3) => {
   let lastError;
@@ -30,6 +69,9 @@ export const uploadWithRetry = async (formData, onProgress, maxRetries = 3) => {
     } catch (error) {
       lastError = error;
       console.error(`Upload attempt ${attempt} failed:`, error);
+      
+      // Reset progress on error
+      if (onProgress) onProgress(0);
       
       // Don't retry on certain errors
       if (error.response?.status === 401 || error.response?.status === 403) {
