@@ -1,4 +1,4 @@
-// Enhanced error handling utilities for the Islamic Audio Platform
+// Enhanced error handling utilities for روح القرآن - Rooh Al-Quran Platform
 
 export const ErrorTypes = {
     NETWORK_ERROR: 'NETWORK_ERROR',

@@ -40,6 +40,11 @@ body {
   word-spacing: 0.1em;
 }
 
+/* Brand title styling */
+.font-amiri {
+  font-family: 'Amiri', serif !important;
+}
+
 /* Quran text styling */
 .quran-text {
   font-family: 'Amiri', serif;
