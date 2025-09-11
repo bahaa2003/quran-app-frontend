@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import LiveRadio from '../components/LiveRadio';
 import SadaqaJariya from '../components/SadaqaJariya';
 import PrayerTimes from '../components/PrayerTimes';
+import Logo from '../components/Logo';
 import { useTheme } from '../contexts/ThemeContext';
 
 const HomePage = () => {
@@ -17,38 +18,26 @@ const HomePage = () => {
             }
         `}>
             {/* Hero Section */}
-            <div className="container mx-auto px-4 py-20">
+            <div className="container mx-auto px-4 py-16">
                 <div className="text-center mb-20">
-                    {/* Main Title */}
+                    {/* Main Logo */}
                     <div className="mb-16">
-                        <div className="relative mb-12 py-6">
-                            <h1 className={`
-                                text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-8 transition-all duration-500 font-amiri leading-tight
-                                bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent
-                                ${isDarkMode ? 'from-emerald-400 via-teal-400 to-cyan-400' : ''}
-                                px-4 overflow-visible
-                            `}>
-                                روح القرآن
-                            </h1>
-                            {/* Decorative Elements */}
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full opacity-70 animate-pulse"></div>
-                            <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full opacity-70 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                        <div className="relative mb-12 py-8">
+                            <Logo size="hero" className="mx-auto" />
                         </div>
                         <div className="w-32 h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600 mx-auto rounded-full mb-12 shadow-lg"></div>
                     </div>
                     
-                    <h2 className={`
-                        text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold mb-6 leading-relaxed transition-colors duration-500
+                    {/* <h2 className={`
+                        text-3xl md:text-4xl lg:text-5xl font-bold mb-4 leading-relaxed transition-colors duration-500
                         ${isDarkMode ? 'text-emerald-300' : 'text-emerald-700'}
-                        px-2
                     `} style={{fontFamily: 'Amiri, serif'}}>
-                        منصة لنشر التلاوات والتفاسير ومواقيت الصلاة
-                    </h2>
+                        وَكَذَٰلِكَ أَوْحَيْنَا إِلَيْكَ رُوحًا مِّنْ أَمْرِنَا ۚ 
+                    </h2> */}
                     
                     <h3 className={`
-                        text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-semibold mb-12 leading-relaxed transition-colors duration-500
+                        text-2xl md:text-3xl lg:text-4xl font-semibold mb-8 leading-relaxed transition-colors duration-500
                         ${isDarkMode ? 'text-slate-100' : 'text-slate-800'}
-                        px-2
                     `} style={{fontFamily: 'Amiri, serif'}}>
                         استمع إلى القرآن الكريم بأصوات من الجنة
                     </h3>

@@ -59,6 +59,9 @@ const Footer = () => {
                         <p>
                             بارك الله فيكم وجعل هذا العمل في ميزان حسناتنا
                         </p>
+                        <p  className="mt-2">
+                        Develop & Design <a href="https://www.linkedin.com/in/bahaa-mohammed-929636205/" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">BAHAA MOHAMMED</a> © Copyright
+                        </p>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../contexts/ThemeContext";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -46,27 +47,10 @@ const Navbar = () => {
           </svg>
         </button>
 
-        <Link to="/" className="flex items-center space-x-3 ltr:space-x-reverse group">
-          <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-all duration-300">
-            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24">
-              <defs>
-                <filter id="navShadow">
-                  <feDropShadow dx="1" dy="1" stdDeviation="1" floodOpacity="0.2"/>
-                </filter>
-              </defs>
-              <path d="M6 4 Q6 3 7 3 L17 3 Q18 3 18 4 L18 20 Q18 21 17 21 L7 21 Q6 21 6 20 Z" fill="currentColor" opacity="0.95" filter="url(#navShadow)"/>
-              <rect x="8" y="6" width="8" height="1.5" rx="0.5" fill="currentColor"/>
-              <rect x="8" y="9" width="6" height="1" rx="0.5" fill="currentColor"/>
-              <rect x="8" y="11.5" width="8" height="1" rx="0.5" fill="currentColor"/>
-              <rect x="8" y="14" width="5.5" height="1" rx="0.5" fill="currentColor"/>
-              <rect x="8" y="16.5" width="8" height="1" rx="0.5" fill="currentColor"/>
-              <circle cx="19.5" cy="6.5" r="2" fill="#f59e0b"/>
-              <path d="M19.5 5 L20.5 6.5 L19.5 8 L18.5 6.5 Z" fill="white" opacity="0.9"/>
-            </svg>
+        <Link to="/" className="group">
+          <div className="transform group-hover:scale-105 transition-all duration-300">
+            <Logo size="navbar" className="text-white group-hover:brightness-110" />
           </div>
-          <span className="self-center text-2xl font-bold whitespace-nowrap text-white group-hover:text-amber-200 transition-colors duration-300 font-amiri">
-            روح القرآن
-          </span>
         </Link>
 
         <div className="flex items-center space-x-4">
@@ -139,12 +123,12 @@ const Navbar = () => {
                 </li>
               ) : (
                 <li>
-                  <Link
+                  {/* <Link
                     to="/login"
                     className="block py-2 px-4 text-white rounded-xl hover:bg-white/20 md:hover:bg-white/20 md:border-0 md:hover:text-amber-200 md:p-2 transition-all duration-300 font-semibold"
                   >
                     🔑 تسجيل الدخول
-                  </Link>
+                  </Link> */}
                 </li>
               )}
               
