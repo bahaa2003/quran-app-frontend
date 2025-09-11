@@ -28,7 +28,7 @@ const Footer = () => {
                             text-sm md:text-base transition-colors duration-500
                             ${isDarkMode ? 'text-slate-400' : 'text-slate-600'}
                         `}>
-                            منصة لنشر تلاوات وتفاسير القرآن الكريم
+                            منصة لنشر تلاوات وتفسير القرآن الكريم
                         </p>
                     </div>
 
